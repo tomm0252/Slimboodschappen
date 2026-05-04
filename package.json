@@ -1,13 +1,2 @@
-{
-  "name": "slimboodschappen-scraper",
-  "version": "1.0.0",
-  "type": "module",
-  "description": "Dagelijkse prijsscraper voor SlimBoodschappen",
-  "main": "main.js",
-  "dependencies": {
-    "apify": "^3.0.0"
-  },
-  "scripts": {
-    "start": "node main.js"
-  }
-}
+  "name": "slimboodschappen-server",
+  "version": "1.0.0"
