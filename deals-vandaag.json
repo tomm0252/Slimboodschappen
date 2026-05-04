@@ -1,0 +1,72 @@
+{
+  "bijgewerktOp": "2025-05-04T06:00:00.000Z",
+  "aantalProducten": 20,
+  "deals": {
+    "Coca-Cola (1,5L)": {
+      "Albert Heijn": [179, 299, "Bonus"],
+      "Jumbo": [189, 299, "Weekdeal"]
+    },
+    "Douwe Egberts (250g)": {
+      "Albert Heijn": [399, 649, "Bonus"],
+      "Jumbo": [419, 529, "2e helft prijs"]
+    },
+    "Old Amsterdam (150g)": {
+      "Albert Heijn": [229, 399, "Bonus"]
+    },
+    "Activia yoghurt (4x125g)": {
+      "Albert Heijn": [199, 299, "Bonus"]
+    },
+    "Ariel wasmiddel (1,5L)": {
+      "Albert Heijn": [599, 999, "Bonus"],
+      "Jumbo": [649, 849, "Weekdeal"]
+    },
+    "Lays (175g)": {
+      "Albert Heijn": [149, 299, "2+1 gratis"],
+      "Jumbo": [159, 299, "2e helft prijs"]
+    },
+    "Heineken (6x33cl)": {
+      "Albert Heijn": [449, 749, "Bonus"],
+      "Jumbo": [479, 629, "Weekdeal"]
+    },
+    "Magnum (4 st)": {
+      "Albert Heijn": [299, 499, "Bonus"],
+      "Jumbo": [319, 419, "2e helft prijs"]
+    },
+    "Tony Chocolonely (180g)": {
+      "Albert Heijn": [249, 449, "Bonus"]
+    },
+    "Pasta Barilla penne (500g)": {
+      "Jumbo": [79, 189, "2e helft prijs"]
+    },
+    "Pasta Barilla spaghetti (500g)": {
+      "Jumbo": [79, 189, "2e helft prijs"]
+    },
+    "Senseo pads (36 st)": {
+      "Albert Heijn": [399, 649, "Bonus"]
+    },
+    "Calve pindakaas (350g)": {
+      "Albert Heijn": [219, 379, "Bonus"]
+    },
+    "Robijn wasmiddel (1,5L)": {
+      "Albert Heijn": [549, 899, "Bonus"]
+    },
+    "Kipfilet (500g)": {
+      "Jumbo": [329, 429, "Weekdeal"]
+    },
+    "Eieren scharrel (12 st)": {
+      "Dirk": [219, 299, "Aanbieding"]
+    },
+    "Snickers multipack (4 st)": {
+      "Albert Heijn": [199, 379, "Bonus"]
+    },
+    "Danone yoghurt (500g)": {
+      "Jumbo": [129, 189, "2e helft prijs"]
+    },
+    "Rijst basmati (1kg)": {
+      "Aldi": [149, 229, "Aanbieding"]
+    },
+    "Douchegel (250ml)": {
+      "Lidl": [89, 129, "Weekaanbieding"]
+    }
+  }
+}
