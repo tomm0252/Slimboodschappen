@@ -2,57 +2,38 @@ module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   const { q } = req.query;
   if (!q) return res.status(200).json({ status: "werkt!" });
-  const resultaten = {};
+  const log = [];
 
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    log.push("AH token ophalen...");
     const t = await fetch("https://api.ah.nl/mobile-auth/v1/auth/token/anonymous", {
       method: "POST",
       headers: { "Content-Type": "application/json", "User-Agent": "Appie/8.22.3" },
-      body: JSON.stringify({ clientId: "appie" }),
-      signal: controller.signal
+      body: JSON.stringify({ clientId: "appie" })
     });
-    clearTimeout(timeout);
+    log.push("AH token status: " + t.status);
     const td = await t.json();
+    log.push("AH token keys: " + Object.keys(td).join(","));
     if (td.access_token) {
-      const controller2 = new AbortController();
-      const timeout2 = setTimeout(() => controller2.abort(), 5000);
+      log.push("AH zoeken...");
       const s = await fetch("https://api.ah.nl/mobile-services/product/search/v2?query=" + encodeURIComponent(q) + "&sortOn=RELEVANCE&size=5", {
-        headers: { "Authorization": "Bearer " + td.access_token, "User-Agent": "Appie/8.22.3", "x-application": "AHWEBSHOP" },
-        signal: controller2.signal
+        headers: { "Authorization": "Bearer " + td.access_token, "User-Agent": "Appie/8.22.3", "x-application": "AHWEBSHOP" }
       });
-      clearTimeout(timeout2);
+      log.push("AH zoek status: " + s.status);
       const d = await s.json();
-      for (const c of d.cards || []) {
-        for (const p of c.products || []) {
-          if (p.price && p.price.now > 0) {
-            resultaten["Albert Heijn"] = { naam: p.title, prijs: Math.round(p.price.now * 100), normaal: Math.round((p.price.was || p.price.now) * 100), aanbieding: p.price.was > p.price.now ? "Bonus" : null };
-            break;
-          }
-        }
-        if (resultaten["Albert Heijn"]) break;
-      }
+      log.push("AH cards: " + (d.cards || []).length);
     }
-  } catch(e) { resultaten["ah_fout"] = e.message; }
+  } catch(e) { log.push("AH FOUT: " + e.message); }
 
   try {
-    const controller3 = new AbortController();
-    const timeout3 = setTimeout(() => controller3.abort(), 5000);
+    log.push("Jumbo zoeken...");
     const j = await fetch("https://mobileapi.jumbo.com/v17/search?q=" + encodeURIComponent(q) + "&offset=0&limit=5", {
-      headers: { "User-Agent": "Mozilla/5.0", "Accept": "application/json" },
-      signal: controller3.signal
+      headers: { "User-Agent": "Mozilla/5.0", "Accept": "application/json" }
     });
-    clearTimeout(timeout3);
+    log.push("Jumbo status: " + j.status);
     const jd = await j.json();
-    for (const p of (jd.products && jd.products.data) || []) {
-      if (p.prices && p.prices.price && p.prices.price.amount > 0) {
-        resultaten["Jumbo"] = { naam: p.title, prijs: Math.round(p.prices.price.amount), normaal: Math.round((p.prices.promotionalPrice && p.prices.promotionalPrice.amount) || p.prices.price.amount), aanbieding: p.prices.promotionalPrice ? "Weekdeal" : null };
-        break;
-      }
-    }
-  } catch(e) { resultaten["jumbo_fout"] = e.message; }
+    log.push("Jumbo producten: " + ((jd.products && jd.products.data) || []).length);
+  } catch(e) { log.push("Jumbo FOUT: " + e.message); }
 
-  res.setHeader("Cache-Control", "public, max-age=1800");
-  return res.status(200).json({ query: q, bijgewerktOp: new Date().toISOString(), resultaten });
+  return res.status(200).json({ query: q, log });
 };
