@@ -1,0 +1,55 @@
+name: Dagelijkse SupermarktPrijzen Update
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-prijzen:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Code ophalen
+        uses: actions/checkout@v4
+
+      - name: 🟢 Node.js instellen
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 📦 Dependencies installeren
+        run: npm install
+
+      - name: 🛒 Apify scraper starten
+        id: apify_run
+        run: |
+          RESPONSE=$(curl -s -X POST \
+            "https://api.apify.com/v2/acts/harvestedge~dutch-supermarkets-all-11/runs?token=${{ secrets.APIFY_TOKEN }}&waitForFinish=120" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "searchTerms": ["melk","brood","pasta","rijst","kipfilet","gehakt","yoghurt","kaas","eieren","boter","cola","water","koffie","thee","chips","chocolade","wasmiddel","tandpasta","shampoo"],
+              "maxResults": 5000
+            }')
+          DATASET_ID=$(echo $RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['defaultDatasetId'])")
+          echo "dataset_id=$DATASET_ID" >> $GITHUB_OUTPUT
+          echo "✅ Dataset ID: $DATASET_ID"
+
+      - name: 🔄 Converteer naar app-formaat
+        run: |
+          node converter.js \
+            --token="${{ secrets.APIFY_TOKEN }}" \
+            --dataset="${{ steps.apify_run.outputs.dataset_id }}" \
+            --output="public/deals-vandaag.json"
+
+      - name: 📤 Commit en push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "SlimBoodschappen Bot"
+          mkdir -p public
+          git add public/deals-vandaag.json
+          git diff --staged --quiet || git commit -m "🛒 Prijsupdate $(date '+%d-%m-%Y')"
+          git push
+
+      - name: ✅ Klaar
+        run: echo "Prijzen bijgewerkt op $(date '+%d-%m-%Y %H:%M')"
