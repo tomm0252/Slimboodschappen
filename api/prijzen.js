@@ -18,7 +18,12 @@ module.exports = async function handler(req, res) {
       for (const c of d.cards || []) {
         for (const p of c.products || []) {
           if (p.price && p.price.now > 0) {
-            resultaten["Albert Heijn"] = { naam: p.title, prijs: Math.round(p.price.now * 100), normaal: Math.round((p.price.was || p.price.now) * 100), aanbieding: p.price.was > p.price.now ? "Bonus" : null };
+            resultaten["Albert Heijn"] = {
+              naam: p.title,
+              prijs: Math.round(p.price.now * 100),
+              normaal: Math.round((p.price.was || p.price.now) * 100),
+              aanbieding: p.price.was > p.price.now ? "Bonus" : null
+            };
             break;
           }
         }
@@ -33,12 +38,20 @@ module.exports = async function handler(req, res) {
     const jd = await j.json();
     for (const p of (jd.products && jd.products.data) || []) {
       if (p.prices && p.prices.price && p.prices.price.amount > 0) {
-        resultaten["Jumbo"] = { naam: p.title, prijs: Math.round(p.prices.price.amount), normaal: Math.round((p.prices.promotionalPrice && p.prices.promotionalPrice.amount) || p.prices.price.amount), aanbieding: p.prices.promotionalPrice ? "Weekdeal" : null };
+        resultaten["Jumbo"] = {
+          naam: p.title,
+          prijs: Math.round(p.prices.price.amount),
+          normaal: Math.round((p.prices.promotionalPrice && p.prices.promotionalPrice.amount) || p.prices.price.amount),
+          aanbieding: p.prices.promotionalPrice ? "Weekdeal" : null
+        };
         break;
       }
     }
   } catch(e) {}
   res.setHeader("Cache-Control", "public, max-age=1800");
-  return res.status(200).json({ query: q, bijgewerktOp: new Date().toISOString(), resultaten });
+  return res.status(200).json({
+    query: q,
+    bijgewerktOp: new Date().toISOString(),
+    resultaten
+  });
 };
-
